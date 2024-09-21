@@ -1,0 +1,9 @@
+@use "./style/Variables.scss" as *;
+
+@import url(./style/Header.scss);
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}

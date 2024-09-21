@@ -1,0 +1,22 @@
+@use "./Variables.scss" as *;
+
+.header-container {
+  width: 100vw;
+  background-color: $background-color;
+}
+
+.logo-text-container {
+  display: flex;
+  align-items: center;
+
+  .logo-style {
+    height: 10vh;
+    margin-left: 10px;
+  }
+
+  .text-color {
+    font-family: $font-text;
+    margin-left: 10px;
+    color: white;
+  }
+}
