@@ -19,4 +19,26 @@
     margin-left: 10px;
     color: white;
   }
+
+  .menu-title-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .burger-icon {
+    margin-left: 40vw;
+  }
+  .bm-overlay {
+    display: none !important;
+  }
+  .bm-item-list {
+    background-color: aqua;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .bm-menu-wrap {
+    top: 0;
+  }
 }
