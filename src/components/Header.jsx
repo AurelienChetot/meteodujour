@@ -14,38 +14,37 @@ export default function Header() {
   return (
     <div className="header-container">
       <div className="logo-text-container">
-        <img className="logo-style" src={LOGO} alt="logo-meteo-du-jour" />
         <div className="menu-title-container">
+          <img className="logo-style" src={LOGO} alt="logo-meteo-du-jour" />
           <p className="text-color">MétéoDuJour</p>
-          <div className="burger-icon" onClick={handleMenuToggle}>
-            <FontAwesomeIcon icon={faBars} size="2x" color="white" />
+        </div>
+        <div className="burger-icon" onClick={handleMenuToggle}>
+          <FontAwesomeIcon icon={faBars} size="2x" color="white" />
+        </div>
+        <Menu
+          right
+          isOpen={menuOpen}
+          customBurgerIcon={false}
+          customCrossIcon={false}
+        >
+          <div className="close-icon" onClick={handleMenuToggle}>
+            <FontAwesomeIcon icon={faTimes} size="2x" color="red" />
           </div>
 
-          <Menu
-            right
-            isOpen={menuOpen}
-            customBurgerIcon={false}
-            customCrossIcon={false}
-          >
-            <div className="close-icon" onClick={handleMenuToggle}>
-              <FontAwesomeIcon icon={faTimes} size="2x" color="red" />
-            </div>
-
-            {/* Liens du menu */}
-            <a className="menu-item" href="/">
-              Accueil
-            </a>
-            <a className="menu-item" href="/meteo">
-              Météo Actuelle
-            </a>
-            <a className="menu-item" href="/previsions">
-              Prévisions
-            </a>
-            <a className="menu-item" href="/contact">
-              Contact
-            </a>
-          </Menu>
-        </div>
+          {/* Liens du menu */}
+          <a className="menu-item" href="/">
+            Accueil
+          </a>
+          <a className="menu-item" href="/meteo">
+            Météo Actuelle
+          </a>
+          <a className="menu-item" href="/previsions">
+            Prévisions
+          </a>
+          <a className="menu-item" href="/contact">
+            Contact
+          </a>
+        </Menu>
       </div>
     </div>
   );
