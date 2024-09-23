@@ -1,6 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-
 function Home() {
   return (
     <div className="home-container">
@@ -10,7 +7,6 @@ function Home() {
           placeholder="Entrez le nom d’une ville pour obtenir la météo"
           className="input-style"
         />
-        <FontAwesomeIcon icon={faSearch} className="search-icon" />
       </div>
     </div>
   );

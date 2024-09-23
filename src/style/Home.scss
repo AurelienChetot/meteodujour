@@ -1,12 +1,11 @@
 @use "./Variables.scss" as *;
 
 .home-container {
-  margin-top: 40px;
+  margin-top: 30px;
   .input-container {
     display: flex;
     justify-content: center;
   }
-
   .input-style {
     width: 80%;
     border: solid 2px black;
@@ -16,6 +15,7 @@
       color: $text-color-black;
       font-family: $font-text;
       font-size: 0.8rem;
+      font-weight: 400;
     }
   }
 }
