@@ -2,6 +2,16 @@
 
 .home-container {
   margin-top: 30px;
+  h1,
+  h2,
+  h3 {
+    font-size: 1rem;
+    font-family: $font-text;
+  }
+  .text-sky {
+    font-size: 0.8rem;
+    font-family: $font-text;
+  }
   .input-container {
     display: flex;
     justify-content: center;
@@ -49,6 +59,19 @@
 
   .prevision-container {
     margin-top: 15px;
+
+    .city-style {
+      font-size: 1.2rem;
+      color: $background-color;
+    }
+
+    .text-prevision {
+      margin-left: 8vw;
+      font-size: 1rem;
+      font-family: $font-text;
+      font-weight: bold;
+    }
+
     .prevision-days-block {
       display: flex;
       align-items: center;
@@ -66,9 +89,29 @@
       padding: 10px;
       background-color: $background-color;
       height: 150px;
+      width: 35vw;
+    }
+    .prevision-days-group {
+      display: flex;
+      justify-content: center;
+      gap: 15vw;
+      margin-top: 10px;
     }
     .icon-prevision {
       width: 60px;
+    }
+    .carousel .control-arrow:focus {
+      outline: none !important;
+      background-color: transparent !important;
+    }
+    .carousel .control-prev.control-arrow:before {
+      border-right: 8px solid $background-color;
+    }
+    .carousel .control-next.control-arrow:before {
+      border-left: 8px solid $background-color;
+    }
+    .carousel .control-arrow {
+      opacity: 1;
     }
   }
 }

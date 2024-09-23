@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import CSS du carrousel
 
 function Home() {
   const [weatherData, setWeatherData] = useState([]);
@@ -39,16 +41,6 @@ function Home() {
     }
   };
 
-  const getColor = (temp) => {
-    if (temp < 0) return "#0ff"; // Cyan
-    if (temp < 8) return "#00f"; // Bleu
-    if (temp < 15) return "#0f0"; // Vert
-    if (temp < 20) return "#ff0"; // Jaune
-    if (temp < 25) return "#ffa500"; // Orange
-    if (temp < 30) return "#f00"; // Rouge
-    return "#800080"; // Violet
-  };
-
   useEffect(() => {
     getWeatherData();
   }, []);
@@ -59,7 +51,15 @@ function Home() {
     }
   }, [selectedCity]);
 
-  // Regrouper les prévisions par jour
+  const getColor = (temp) => {
+    if (temp < 0) return "#0ff"; // Cyan
+    if (temp < 8) return "#00f"; // Bleu
+    if (temp < 15) return "#0f0"; // Vert
+    if (temp < 20) return "#ff0"; // Jaune
+    if (temp < 25) return "#ffa500"; // Orange
+    if (temp < 30) return "#f00"; // Rouge
+    return "#800080"; // Violet
+  };
   const groupedForecasts = forecastData
     ? forecastData.list.reduce((acc, entry) => {
         const date = new Date(entry.dt * 1000).toLocaleDateString("fr-FR");
@@ -70,6 +70,15 @@ function Home() {
         return acc;
       }, {})
     : {};
+
+  const groupedByThreeDays = Object.entries(groupedForecasts).reduce(
+    (acc, curr, index) => {
+      if (index % 2 === 0) acc.push([]);
+      acc[acc.length - 1].push(curr);
+      return acc;
+    },
+    []
+  );
 
   return (
     <div className="home-container">
@@ -96,35 +105,48 @@ function Home() {
               src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
               alt={data.weather[0].description}
             />
-            <p>{data.weather[0].description}</p>
+            <p className="text-sky">{data.weather[0].description}</p>
           </div>
         ))}
       </div>
       {forecastData && (
         <div className="prevision-container">
-          <p>Prévisions sur 5 jours pour {selectedCity.name} :</p>
-          <div className="prevision-days-block">
-            {Object.entries(groupedForecasts).map(([date, entries]) => {
-              const tempAvg = Math.round(
-                entries.reduce((sum, entry) => sum + entry.main.temp, 0) /
-                  entries.length
-              );
-              const weatherIcon = entries[0].weather[0].icon;
-              const description = entries[0].weather[0].description;
-              return (
-                <div key={date} className="prevision-days-container">
-                  <p>{date}</p>
-                  <p>{tempAvg} °C</p>
-                  <img
-                    className="icon-prevision"
-                    src={`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
-                    alt={description}
-                  />
-                  <p>{description}</p>
-                </div>
-              );
-            })}
-          </div>
+          <p className="text-prevision">
+            Prévisions sur 5 jours pour{" "}
+            <span className="city-style">{selectedCity.name}</span> :
+          </p>
+          <Carousel
+            showArrows={true}
+            showStatus={false}
+            showIndicators={false}
+            infiniteLoop
+          >
+            {groupedByThreeDays.map((group, index) => (
+              <div key={index} className="prevision-days-group">
+                {group.map(([date, entries]) => {
+                  const tempAvg = Math.round(
+                    entries.reduce((sum, entry) => sum + entry.main.temp, 0) /
+                      entries.length
+                  );
+                  const weatherIcon = entries[0].weather[0].icon;
+                  const description = entries[0].weather[0].description;
+
+                  return (
+                    <div key={date} className="prevision-days-container">
+                      <h3>{date}</h3>
+                      <p style={{ color: getColor(tempAvg) }}>{tempAvg} °C</p>
+                      <img
+                        className="icon-prevision"
+                        src={`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
+                        alt={description}
+                      />
+                      <p className="text-sky">{description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </Carousel>
         </div>
       )}
     </div>
