@@ -7,13 +7,23 @@ function Home() {
   const [weatherData, setWeatherData] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [forecastData, setForecastData] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [citySuggestions, setCitySuggestions] = useState([]);
 
   const apiKey = "8df23e1645deb051646102affe75b498";
-  const cities = [
-    "Chalon-sur-Saône,71,France",
-    "Lyon,69,France",
-    "Paris,75,France",
-  ];
+
+  const getInitialCities = () => {
+    const savedCities = JSON.parse(localStorage.getItem("favoriteCities"));
+    return savedCities
+      ? savedCities
+      : [
+          { name: "Lyon", lat: 45.764, lon: 4.8357 },
+          { name: "Paris", lat: 48.8566, lon: 2.3522 },
+          { name: "Chalon-sur-Saône", lat: 46.783329, lon: 4.85 },
+        ];
+  };
+
+  const [cities, setCities] = useState(getInitialCities());
 
   const getWeatherData = async () => {
     try {
@@ -34,6 +44,8 @@ function Home() {
     }
   };
 
+  console.info(cities);
+
   const getForecastData = async (city) => {
     try {
       const response = await axios.get(
@@ -45,9 +57,24 @@ function Home() {
     }
   };
 
+  const getCitySuggestions = async (query) => {
+    if (!query) {
+      setCitySuggestions([]);
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${apiKey}&units=metric&lang=fr`
+      );
+      setCitySuggestions(response.data.list);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des villes :", error);
+    }
+  };
+
   useEffect(() => {
     getWeatherData();
-  }, []);
+  }, [cities]);
 
   useEffect(() => {
     if (selectedCity) {
@@ -55,15 +82,33 @@ function Home() {
     }
   }, [selectedCity]);
 
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    getCitySuggestions(e.target.value);
+  };
+
+  const handleCitySelect = (city) => {
+    const newCities = [...cities];
+    if (newCities.length >= 3) {
+      newCities.shift(); // Supprime la première ville pour faire de la place
+    }
+    newCities.push(`${city.name}, ${city.sys.country}`);
+    setCities(newCities);
+    localStorage.setItem("favoriteCities", JSON.stringify(newCities)); // Sauvegarde dans le local storage
+    setInputValue(`${city.name}, ${city.sys.country}`);
+    setCitySuggestions([]);
+  };
+
   const getColor = (temp) => {
     if (temp < 0) return "#0ff"; // Cyan
     if (temp < 8) return "#00f"; // Bleu
     if (temp < 15) return "#0f0"; // Vert
     if (temp < 20) return "#ff0"; // Jaune
-    if (temp < 25) return "#ffa500"; // Orange
-    if (temp < 30) return "#f00"; // Rouge
+    if (temp < 28) return "#ffa500"; // Orange
+    if (temp < 32) return "#f00"; // Rouge
     return "#800080"; // Violet
   };
+
   const groupedForecasts = forecastData
     ? forecastData.list.reduce((acc, entry) => {
         const date = new Date(entry.dt * 1000).toLocaleDateString("fr-FR");
@@ -89,9 +134,20 @@ function Home() {
       <div className="input-container">
         <input
           type="text"
+          value={inputValue}
+          onChange={handleInputChange}
           placeholder="Entrez le nom d’une ville pour obtenir la météo"
           className="input-style"
         />
+        {citySuggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {citySuggestions.map((city) => (
+              <li key={city.id} onClick={() => handleCitySelect(city)}>
+                {city.name}, {city.sys.country}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div className="cards-container">
         {weatherData.map((data, index) => (
@@ -102,7 +158,7 @@ function Home() {
           >
             <h2 className="city-name">{data.name}</h2>
             <p style={{ color: getColor(data.main.temp) }}>
-              {Math.round(data.main.temp)} °C
+              {Math.floor(data.main.temp)} °C
             </p>
             <img
               className="icon-weather"
