@@ -3,8 +3,7 @@
 .home-container {
   margin-top: 30px;
   h1,
-  h2,
-  h3 {
+  h2 {
     font-size: 1rem;
     font-family: $font-text;
   }
@@ -67,9 +66,14 @@
 
     .text-prevision {
       margin-left: 8vw;
+      margin-right: 8vw;
       font-size: 1rem;
       font-family: $font-text;
       font-weight: bold;
+    }
+
+    .style-max-min {
+      color: $text-color;
     }
 
     .prevision-days-block {

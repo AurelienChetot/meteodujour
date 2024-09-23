@@ -9,7 +9,11 @@ function Home() {
   const [forecastData, setForecastData] = useState(null);
 
   const apiKey = "8df23e1645deb051646102affe75b498";
-  const cities = ["Paris", "Lyon", "Chalon-sur-Saône"];
+  const cities = [
+    "Chalon-sur-Saône,71,France",
+    "Lyon,69,France",
+    "Paris,75,France",
+  ];
 
   const getWeatherData = async () => {
     try {
@@ -124,17 +128,21 @@ function Home() {
             {groupedByThreeDays.map((group, index) => (
               <div key={index} className="prevision-days-group">
                 {group.map(([date, entries]) => {
-                  const tempAvg = Math.round(
-                    entries.reduce((sum, entry) => sum + entry.main.temp, 0) /
-                      entries.length
-                  );
+                  const temps = entries.map((entry) => entry.main.temp);
+                  const tempMax = Math.round(Math.max(...temps));
+                  const tempMin = Math.floor(Math.min(...temps));
                   const weatherIcon = entries[0].weather[0].icon;
                   const description = entries[0].weather[0].description;
 
                   return (
                     <div key={date} className="prevision-days-container">
                       <h3>{date}</h3>
-                      <p style={{ color: getColor(tempAvg) }}>{tempAvg} °C</p>
+                      <p style={{ color: getColor(tempMax) }}>
+                        <span className="style-max-min">Max:</span> {tempMax} °C
+                      </p>
+                      <p style={{ color: getColor(tempMin) }}>
+                        <span className="style-max-min">Min:</span> {tempMin} °C
+                      </p>
                       <img
                         className="icon-prevision"
                         src={`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
