@@ -1,0 +1,21 @@
+@use "./Variables.scss" as *;
+
+.home-container {
+  margin-top: 40px;
+  .input-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .input-style {
+    width: 80%;
+    border: solid 2px black;
+    border-radius: 20px;
+    padding: 5px;
+    &::placeholder {
+      color: $text-color-black;
+      font-family: $font-text;
+      font-size: 0.8rem;
+    }
+  }
+}

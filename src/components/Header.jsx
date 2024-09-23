@@ -30,20 +30,20 @@ export default function Header() {
           <div className="close-icon" onClick={handleMenuToggle}>
             <FontAwesomeIcon icon={faTimes} size="2x" color="red" />
           </div>
-
-          {/* Liens du menu */}
-          <a className="menu-item" href="/">
-            Accueil
-          </a>
-          <a className="menu-item" href="/meteo">
-            Météo Actuelle
-          </a>
-          <a className="menu-item" href="/previsions">
-            Prévisions
-          </a>
-          <a className="menu-item" href="/contact">
-            Contact
-          </a>
+          <div className="menu-item-container">
+            <a className="menu-item" href="/">
+              Accueil
+            </a>
+            <a className="menu-item" href="/meteo">
+              Météo Actuelle
+            </a>
+            <a className="menu-item" href="/previsions">
+              Prévisions
+            </a>
+            <a className="menu-item" href="/contact">
+              Contact
+            </a>
+          </div>
         </Menu>
       </div>
     </div>
