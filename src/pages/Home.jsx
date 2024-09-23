@@ -10,7 +10,7 @@ function Home() {
   const [inputValue, setInputValue] = useState("");
   const [citySuggestions, setCitySuggestions] = useState([]);
 
-  const apiKey = "8df23e1645deb051646102affe75b498";
+  const apiKey = import.meta.env.REACT_APP_API_KEY;
 
   const getInitialCities = () => {
     const savedCities = JSON.parse(localStorage.getItem("favoriteCities"));
