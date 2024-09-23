@@ -9,17 +9,21 @@ function Home() {
   const [forecastData, setForecastData] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [citySuggestions, setCitySuggestions] = useState([]);
-
-  const apiKey = import.meta.env.REACT_APP_API_KEY;
+  const apiKey = import.meta.env.VITE_REACT_APP_API_KEY;
 
   const getInitialCities = () => {
     const savedCities = JSON.parse(localStorage.getItem("favoriteCities"));
     return savedCities
       ? savedCities
       : [
-          { name: "Lyon", lat: 45.764, lon: 4.8357 },
-          { name: "Paris", lat: 48.8566, lon: 2.3522 },
-          { name: "Chalon-sur-Saône", lat: 46.783329, lon: 4.85 },
+          { name: "Lyon", lat: 45.764, lon: 4.8357, postalCode: "69000" },
+          { name: "Paris", lat: 48.8566, lon: 2.3522, postalCode: "75000" },
+          {
+            name: "Chalon-sur-Saône",
+            lat: 46.783329,
+            lon: 4.85,
+            postalCode: "71100",
+          },
         ];
   };
 
@@ -30,7 +34,7 @@ function Home() {
       const responses = await Promise.all(
         cities.map((city) =>
           axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=fr`
+            `https://api.openweathermap.org/data/2.5/weather?q=${city.name}&appid=${apiKey}&units=metric&lang=fr`
           )
         )
       );
@@ -44,14 +48,16 @@ function Home() {
     }
   };
 
-  console.info(cities);
-
   const getForecastData = async (city) => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=fr`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city.name}&appid=${apiKey}&units=metric&lang=fr`
       );
       setForecastData(response.data);
+      setSelectedCity((prev) => ({
+        ...prev,
+        timezone: response.data.city.timezone,
+      })); // Ajout du fuseau horaire
     } catch (error) {
       console.error("Erreur lors de la récupération des prévisions :", error);
     }
@@ -78,7 +84,7 @@ function Home() {
 
   useEffect(() => {
     if (selectedCity) {
-      getForecastData(selectedCity.name);
+      getForecastData(selectedCity);
     }
   }, [selectedCity]);
 
@@ -92,10 +98,13 @@ function Home() {
     if (newCities.length >= 3) {
       newCities.shift(); // Supprime la première ville pour faire de la place
     }
-    newCities.push(`${city.name}, ${city.sys.country}`);
+    newCities.push({
+      name: city.name,
+      country: city.sys.country,
+      postalCode: city.postalCode,
+    }); // Ajoute l'objet ville
     setCities(newCities);
-    localStorage.setItem("favoriteCities", JSON.stringify(newCities)); // Sauvegarde dans le local storage
-    setInputValue(`${city.name}, ${city.sys.country}`);
+    setInputValue(`${city.name}, ${city.sys.country}, ${city.postalCode}`);
     setCitySuggestions([]);
   };
 
@@ -111,7 +120,10 @@ function Home() {
 
   const groupedForecasts = forecastData
     ? forecastData.list.reduce((acc, entry) => {
-        const date = new Date(entry.dt * 1000).toLocaleDateString("fr-FR");
+        // Ajustez la date avec le fuseau horaire
+        const date = new Date(
+          (entry.dt + forecastData.city.timezone) * 1000
+        ).toLocaleDateString("fr-FR");
         if (!acc[date]) {
           acc[date] = [];
         }
@@ -128,6 +140,17 @@ function Home() {
     },
     []
   );
+
+  // Récupération de la prévision actuelle
+  const todayForecast = forecastData
+    ? forecastData.list.filter((entry) => {
+        const forecastDate = new Date(
+          (entry.dt + forecastData.city.timezone) * 1000
+        ).toLocaleDateString("fr-FR");
+        const today = new Date().toLocaleDateString("fr-FR");
+        return forecastDate === today;
+      })
+    : [];
 
   return (
     <div className="home-container">
@@ -179,6 +202,7 @@ function Home() {
             showArrows={true}
             showStatus={false}
             showIndicators={false}
+            showThumbs={false}
             infiniteLoop
           >
             {groupedByThreeDays.map((group, index) => (
