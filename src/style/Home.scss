@@ -18,4 +18,57 @@
       font-weight: 400;
     }
   }
+
+  .cards-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+
+    .weather-card {
+      display: flex;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: $background-color;
+      color: $text-color;
+      border-radius: 10px;
+      padding: 5px;
+      width: 25%;
+      height: auto;
+      margin: 10px;
+    }
+    .city-name {
+      font-size: 0.9rem;
+      font-family: $font-text;
+    }
+    .icon-weather {
+      width: 50px;
+    }
+  }
+
+  .prevision-container {
+    margin-top: 15px;
+    .prevision-days-block {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      gap: 10px;
+    }
+    .prevision-days-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: solid 2px black;
+      text-align: center;
+      border-radius: 5px;
+      color: $text-color;
+      padding: 10px;
+      background-color: $background-color;
+      height: 150px;
+    }
+    .icon-prevision {
+      width: 60px;
+    }
+  }
 }
