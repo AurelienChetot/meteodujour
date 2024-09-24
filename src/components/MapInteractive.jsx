@@ -9,6 +9,19 @@ import {
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import citiesData from "../data/cities.json";
+import L from "leaflet";
+
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIconRetina from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIconRetina,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const { BaseLayer, Overlay } = LayersControl;
 const apiKey = import.meta.env.VITE_REACT_APP_WEATHERBIT_API_KEY;
