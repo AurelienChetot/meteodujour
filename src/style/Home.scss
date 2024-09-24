@@ -14,6 +14,8 @@
   .input-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
   .input-style {
     width: 80%;
@@ -34,6 +36,7 @@
     justify-content: center;
 
     .weather-card {
+      position: relative;
       display: flex;
       text-align: center;
       flex-direction: column;
@@ -47,9 +50,16 @@
       height: auto;
       margin: 10px;
     }
+    .icone-empty-storage {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 5px;
+    }
     .city-name {
       font-size: 0.9rem;
       font-family: $font-text;
+      margin-top: 15px;
     }
     .icon-weather {
       width: 50px;

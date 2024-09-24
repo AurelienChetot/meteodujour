@@ -1,0 +1,12 @@
+@use "./Variables.scss" as *;
+
+.map-interactive-container {
+  display: flex;
+  justify-content: center;
+  .map-container {
+    border: solid 2px $background-color;
+    border-radius: 10px;
+    height: 40vh;
+    width: 90%;
+  }
+}

@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import CSS du carrousel
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import axios from "axios";
+
+import MapInteractive from "../components/MapInteractive";
 
 function Home() {
   const [weatherData, setWeatherData] = useState([]);
@@ -16,7 +20,7 @@ function Home() {
     return savedCities
       ? savedCities
       : [
-          { name: "Lyon", lat: 45.764, lon: 4.8357, postalCode: "69000" },
+          { name: "Lyon", lat: 45.764043, lon: 4.835659, postalCode: "69000" },
           { name: "Paris", lat: 48.8566, lon: 2.3522, postalCode: "75000" },
           {
             name: "Chalon-sur-Saône",
@@ -72,7 +76,19 @@ function Home() {
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${apiKey}&units=metric&lang=fr`
       );
-      setCitySuggestions(response.data.list);
+      const suggestions = await Promise.all(
+        response.data.list.map(async (city) => {
+          const weatherResponse = await axios.get(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city.name}&appid=${apiKey}&units=metric&lang=fr`
+          );
+          return {
+            ...city,
+            currentTemp: Math.round(weatherResponse.data.main.temp),
+            weatherDescription: weatherResponse.data.weather[0].description,
+          };
+        })
+      );
+      setCitySuggestions(suggestions);
     } catch (error) {
       console.error("Erreur lors de la récupération des villes :", error);
     }
@@ -96,16 +112,23 @@ function Home() {
   const handleCitySelect = (city) => {
     const newCities = [...cities];
     if (newCities.length >= 3) {
-      newCities.shift(); // Supprime la première ville pour faire de la place
+      newCities.shift();
     }
     newCities.push({
       name: city.name,
       country: city.sys.country,
       postalCode: city.postalCode,
-    }); // Ajoute l'objet ville
+    });
     setCities(newCities);
-    setInputValue(`${city.name}, ${city.sys.country}, ${city.postalCode}`);
+    setInputValue(`${city.name}, ${city.sys.country}`);
     setCitySuggestions([]);
+    localStorage.setItem("favoriteCities", JSON.stringify(newCities));
+  };
+
+  const handleRemoveCity = (cityToRemove) => {
+    const newCities = cities.filter((city) => city.name !== cityToRemove.name);
+    setCities(newCities);
+    localStorage.setItem("favoriteCities", JSON.stringify(newCities));
   };
 
   const getColor = (temp) => {
@@ -120,7 +143,6 @@ function Home() {
 
   const groupedForecasts = forecastData
     ? forecastData.list.reduce((acc, entry) => {
-        // Ajustez la date avec le fuseau horaire
         const date = new Date(
           (entry.dt + forecastData.city.timezone) * 1000
         ).toLocaleDateString("fr-FR");
@@ -141,17 +163,6 @@ function Home() {
     []
   );
 
-  // Récupération de la prévision actuelle
-  const todayForecast = forecastData
-    ? forecastData.list.filter((entry) => {
-        const forecastDate = new Date(
-          (entry.dt + forecastData.city.timezone) * 1000
-        ).toLocaleDateString("fr-FR");
-        const today = new Date().toLocaleDateString("fr-FR");
-        return forecastDate === today;
-      })
-    : [];
-
   return (
     <div className="home-container">
       <div className="input-container">
@@ -162,11 +173,19 @@ function Home() {
           placeholder="Entrez le nom d’une ville pour obtenir la météo"
           className="input-style"
         />
+
         {citySuggestions.length > 0 && (
           <ul className="suggestions-list">
-            {citySuggestions.map((city) => (
-              <li key={city.id} onClick={() => handleCitySelect(city)}>
-                {city.name}, {city.sys.country}
+            {citySuggestions.slice(0, 5).map((city) => (
+              <li
+                key={city.id}
+                onClick={() => handleCitySelect(city)}
+                className="suggestion-item"
+              >
+                <strong>{city.name}</strong> <em>({city.sys.country})</em>
+                <p>
+                  Temp: {city.currentTemp} °C - {city.weatherDescription}
+                </p>
               </li>
             ))}
           </ul>
@@ -179,6 +198,16 @@ function Home() {
             className="weather-card"
             onClick={() => setSelectedCity(data)}
           >
+            <FontAwesomeIcon
+              className="icone-empty-storage"
+              icon={faTimes}
+              size="1x"
+              color="red"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveCity(data);
+              }}
+            />
             <h2 className="city-name">{data.name}</h2>
             <p style={{ color: getColor(data.main.temp) }}>
               {Math.floor(data.main.temp)} °C
@@ -237,6 +266,7 @@ function Home() {
           </Carousel>
         </div>
       )}
+      <MapInteractive />
     </div>
   );
 }
