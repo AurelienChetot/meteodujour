@@ -13,6 +13,7 @@ function Home() {
   const [forecastData, setForecastData] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [citySuggestions, setCitySuggestions] = useState([]);
+
   const apiKey = import.meta.env.VITE_REACT_APP_API_KEY;
 
   const getInitialCities = () => {

@@ -29,6 +29,23 @@
       font-weight: 400;
     }
   }
+  .suggestions-list {
+    position: absolute;
+    z-index: 10;
+    top: 95px;
+    background-color: $background-color;
+    padding: 10px;
+    border-radius: 10px;
+    left: 57px;
+    text-decoration: none;
+    li {
+      color: $text-color;
+      list-style-type: none;
+    }
+    strong {
+      text-decoration: underline;
+    }
+  }
 
   .cards-container {
     margin-top: 20px;

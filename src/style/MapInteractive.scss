@@ -3,10 +3,11 @@
 .map-interactive-container {
   display: flex;
   justify-content: center;
+  margin-top: 50px;
   .map-container {
     border: solid 2px $background-color;
     border-radius: 10px;
-    height: 40vh;
+    height: 50vh;
     width: 90%;
   }
 }
