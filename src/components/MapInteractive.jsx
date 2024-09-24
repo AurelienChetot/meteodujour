@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -8,7 +8,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
-import citiesData from "../data/cities.json"; // Importation des données des villes
+import citiesData from "../data/cities.json";
 
 const { BaseLayer, Overlay } = LayersControl;
 const apiKey = import.meta.env.VITE_REACT_APP_WEATHERBIT_API_KEY;
@@ -18,7 +18,7 @@ export default function MapInteractive() {
   const [weatherData, setWeatherData] = useState({});
   const [showCities, setShowCities] = useState(
     citiesData.cities.reduce((acc, city) => {
-      acc[city.name] = true; // Initialisez chaque ville à "visible"
+      acc[city.name] = true;
       return acc;
     }, {})
   );
@@ -27,7 +27,6 @@ export default function MapInteractive() {
     const fetchWeatherData = async () => {
       const newWeatherData = {};
 
-      // Récupération des données météo pour chaque ville
       for (const city of citiesData.cities) {
         try {
           const response = await axios.get(
@@ -51,7 +50,7 @@ export default function MapInteractive() {
   const toggleAllCitiesVisibility = (isChecked) => {
     setShowCities(
       citiesData.cities.reduce((acc, city) => {
-        acc[city.name] = isChecked; // Met à jour chaque ville selon la case principale
+        acc[city.name] = isChecked;
         return acc;
       }, {})
     );
@@ -63,16 +62,18 @@ export default function MapInteractive() {
 
   return (
     <div className="map-interactive-container">
-      <h1>Carte interactive : </h1>
+      <h1>Carte interactive :</h1>
       <MapContainer center={position} zoom={5} className="map-container">
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-
         <LayersControl position="topright">
           <BaseLayer checked name="Carte de Base">
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          </BaseLayer>
+
+          <BaseLayer name="Vue Satellite (Esri)">
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='&copy; <a href="https://www.esri.com/en-us/home">Esri</a>'
+            />
           </BaseLayer>
 
           <Overlay checked name="Température">
@@ -88,9 +89,13 @@ export default function MapInteractive() {
               opacity={1}
             />
           </Overlay>
+          <Overlay name="Précipitations">
+            <TileLayer
+              url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKey}`}
+              opacity={1}
+            />
+          </Overlay>
         </LayersControl>
-
-        {/* Ajoutez les marqueurs pour chaque ville visible */}
         {citiesData.cities.map(
           (city) =>
             showCities[city.name] && (
@@ -107,8 +112,6 @@ export default function MapInteractive() {
             )
         )}
       </MapContainer>
-
-      {/* Contrôle des villes en dehors de LayersControl */}
       <div className="city-controls">
         <label>
           <input
@@ -116,7 +119,7 @@ export default function MapInteractive() {
             checked={allCitiesChecked}
             onChange={(e) => toggleAllCitiesVisibility(e.target.checked)}
           />
-          Afficher/Tous masquer les villes
+          Afficher/Masquer les villes
         </label>
       </div>
     </div>
