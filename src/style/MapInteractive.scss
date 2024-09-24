@@ -4,6 +4,8 @@
   display: flex;
   justify-content: center;
   margin-top: 50px;
+  position: relative;
+
   .map-container {
     border: solid 2px $background-color;
     border-radius: 10px;

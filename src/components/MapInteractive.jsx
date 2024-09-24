@@ -80,6 +80,7 @@ export default function MapInteractive() {
               opacity={1}
             />
           </Overlay>
+
           <Overlay name="Nuages">
             <TileLayer
               url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${apiKey}`}
@@ -105,7 +106,12 @@ export default function MapInteractive() {
             )
         )}
       </MapContainer>
-      <div className="city-controls">
+
+      {/* Contrôle des villes en dehors de LayersControl */}
+      <div
+        className="city-controls"
+        style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}
+      >
         <label>
           <input
             type="checkbox"
