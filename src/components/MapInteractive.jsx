@@ -63,6 +63,7 @@ export default function MapInteractive() {
 
   return (
     <div className="map-interactive-container">
+      <h1>Carte interactive : </h1>
       <MapContainer center={position} zoom={5} className="map-container">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -108,10 +109,7 @@ export default function MapInteractive() {
       </MapContainer>
 
       {/* Contrôle des villes en dehors de LayersControl */}
-      <div
-        className="city-controls"
-        style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}
-      >
+      <div className="city-controls">
         <label>
           <input
             type="checkbox"
